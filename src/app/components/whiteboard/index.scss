@@ -1,0 +1,67 @@
+@import "../../styles/variables";
+.whiteboard {
+  padding: 20px 12px;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  .content{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: fit-content;
+    justify-content: flex-end;
+    color: white;
+  }
+  .footer-input-btn {
+    box-sizing: border-box;
+    display: flex;
+    width:100%;
+    border: none;
+    background-color: $gray-750;
+    padding: 16px;
+    border-radius: 1.25rem;
+    flex-direction: column;
+    .input-text {
+      width: 100%;
+      background-color: $gray-750;
+      border: none;
+      display: flex;
+      flex-wrap: wrap;
+      color: $white;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      font-size: 16px;
+      margin-bottom: 16px;
+      &:focus-visible {
+        outline: none;
+      }
+      input{
+        display: none;
+      }
+    }
+    .buttons{
+        display: flex;
+        justify-content: space-between;
+        p{
+            padding: 6px 8px;
+            font-size: 12px;
+            font-family: $font-family;
+            color: white;
+            border-radius: 26px;
+
+            &.write{
+                background-color:crimson;
+            }
+            &.append{
+                background-color: blueviolet;
+            }
+            &.annotate{
+                background-color: deeppink;
+            }
+        }
+    }
+  }
+}

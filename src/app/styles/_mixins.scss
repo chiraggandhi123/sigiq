@@ -1,0 +1,31 @@
+// Flex Center
+@mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  // Media Query
+  @mixin respond($breakpoint) {
+    @if $breakpoint == 'small' {
+      @media (max-width: 576px) { @content; }
+    } @else if $breakpoint == 'medium' {
+      @media (max-width: 768px) { @content; }
+    } @else if $breakpoint == 'large' {
+      @media (max-width: 992px) { @content; }
+    }
+  }
+  
+  // Ellipsis Text
+  @mixin ellipsis($width) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: $width;
+  }
+  
+  // Box Shadow
+  @mixin box-shadow($color: rgba(0, 0, 0, 0.1)) {
+    box-shadow: 0 4px 6px $color, 0 1px 3px $color;
+  }
+  

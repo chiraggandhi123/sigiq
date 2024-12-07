@@ -1,0 +1,11 @@
+@import './styles/variables';
+
+body {
+  font-family: $font-family;
+  background-color: $gray-800;
+}
+
+*{
+    padding: 0px;
+    margin: 0px;
+}
