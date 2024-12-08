@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { annotate } from "rough-notation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -9,62 +9,101 @@ import { mockServer } from "../../utils";
 
 const Whiteboard = () => {
   const [content, setContent] = useState<string>("");
-  const [pattern, setPattern] = useState<RegExp | null>(null);
+  const [animatedText, setAnimatedText] = useState<string>("");
   const [inputText, setInputText] = useState<string>("");
+  const [annotations, setAnnotations] = useState<any>([]);
+  const animatedIdx = useRef(0);
+  const [shouldRenderAnimation, setShoudlRenderAnimation] = useState(false);
   const handleWrite = async () => {
+    setContent("");
+    setAnimatedText("");
+    setShoudlRenderAnimation(true);
+    animatedIdx.current = 0;
     const response = await mockServer("write");
     if (response?.mode === "WRITE") {
       const {text} = response?.payload;
-      setContent("");
-      animateWrite(text as string);
+      setContent(text as string);
     }
   };
-  const handleAppend = async () => {
-    const response = await mockServer("append");
-    if (response.mode === "APPEND") {
-      animateWrite(response.payload.text as string);
-    }
-  };
+
   const handleAnnotate = async () => {
-    const regex = new RegExp(`\\b${inputText}\\b`, "gi"); // This will match the dynamic value as a whole word
-    setPattern(regex as RegExp);
+    // debugger;
+    setShoudlRenderAnimation(false);
+    const [regexInp, index] = inputText.split('#');
+    const regex = new RegExp(`\\b${regexInp}\\b`, "gi"); 
+    setAnnotations((prev:any)=>[...prev,{
+      idx:index, regex:regex
+    }])
   };
-  const animateWrite = (text: string) => {
-    let i = 0;
-    const interval = setInterval(() => {
-      setContent((prev) => prev + text[i]);
-      i++;
-      if (i >= text.length-1) clearInterval(interval);
-    }, 50);
-  };
-  const renderAnnotatedContent = () => {
-    let annotatedContent = content;
-   if(pattern){
-    annotatedContent = content.replace(pattern, (match) => {
-        return `<span id="match">${match}</span>`;
-      });
-   }
-    return annotatedContent;
-  };
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.innerText);
   };
-
-  useEffect(()=>{
-    const elems: NodeListOf<HTMLElement> = document.querySelectorAll('span#match');
-    elems.forEach((element) => {
-        const annotation = annotate(element, { type: "underline", color: "red" });
-        annotation.show();
+  const renderAnnotatedContent = () => {
+    let annotatedContent = content;
+  
+    annotations.forEach((item: any, id: any) => {
+      annotatedContent = annotatedContent.replace(item.regex, (match) => {
+        return `<span id="match-${id}">${match}</span>`;
+      });
     });
-},[pattern]);
+  
+    return annotatedContent;
+  };
+  
+  const handleAppend = async () => {
+    setShoudlRenderAnimation(true); 
+    const response = await mockServer("append");
+  
+    if (response.mode === "APPEND") {
+      const newContent = response.payload.text;
+  
+      setContent((prev) => prev + newContent);
+  
+      setAnnotations((prev:any) => [...prev]); 
+    }
+  };
+  
+  useEffect(() => {
+    if (annotations.length > 0) {
+      const annotatedContent = renderAnnotatedContent();
+      setAnimatedText(annotatedContent); }
+  }, [content, annotations]);
+  
+  useEffect(()=>{
+    if(annotations.length > 0){
+      console.log(annotations);
+      for(let  i =0;i<annotations.length;i++){
+        const elems: NodeListOf<HTMLElement> = document.querySelectorAll(`span#match-${i}`);
+        if(elems.length > 0 && annotations[i].idx < elems.length){
+          const annotation = annotate(elems[annotations[i].idx], { type: "underline", color: "red" });
+          annotation.show();
+        }
+      }
+    }
+},[annotations]);
 
+
+useEffect(() => {
+  const text = content;
+  const interval = setInterval(() => {
+    if (animatedIdx.current < text.length - 1) {
+      setAnimatedText((prev) => prev + text[animatedIdx.current]);
+      animatedIdx.current++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 50); 
+
+  return () => clearInterval(interval); // Cleanup
+}, [content]);
   return (
     <div className="whiteboard">
       
       <div className="content" id="content">
         <Markdown
         rehypePlugins={[rehypeRaw]}
-        children={renderAnnotatedContent()}
+        children={shouldRenderAnimation ? animatedText : renderAnnotatedContent()}
         />
       </div>
       <div className="footer-input-btn">

@@ -7,18 +7,24 @@
   display: flex;
   flex-direction: column;
   gap: 50px;
-  .content{
+  .content {
     display: flex;
-    flex: 1;
+    flex: 1 1;
     flex-direction: column;
     height: fit-content;
-    justify-content: flex-end;
+    justify-content: flex-start;
     color: white;
+    height: calc(100vh - 162px);
+    overflow: scroll;
+    &::-webkit-scrollbar{
+      display: none;
+    }
   }
+  
   .footer-input-btn {
     box-sizing: border-box;
     display: flex;
-    width:100%;
+    width: 100%;
     border: none;
     background-color: $gray-750;
     padding: 16px;
@@ -38,30 +44,30 @@
       &:focus-visible {
         outline: none;
       }
-      input{
+      input {
         display: none;
       }
     }
-    .buttons{
-        display: flex;
-        justify-content: space-between;
-        p{
-            padding: 6px 8px;
-            font-size: 12px;
-            font-family: $font-family;
-            color: white;
-            border-radius: 26px;
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      p {
+        padding: 6px 8px;
+        font-size: 12px;
+        font-family: $font-family;
+        color: white;
+        border-radius: 26px;
 
-            &.write{
-                background-color:crimson;
-            }
-            &.append{
-                background-color: blueviolet;
-            }
-            &.annotate{
-                background-color: deeppink;
-            }
+        &.write {
+          background-color: crimson;
         }
+        &.append {
+          background-color: blueviolet;
+        }
+        &.annotate {
+          background-color: deeppink;
+        }
+      }
     }
   }
 }
