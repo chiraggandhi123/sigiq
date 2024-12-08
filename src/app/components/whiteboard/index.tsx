@@ -3,14 +3,9 @@ import { annotate } from "rough-notation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import "./index.scss";
-import { MockServerArgs } from "../../interface";
 import { mockServer } from "../../utils";
 
-interface Annotation {
-  start: number;
-  end: number;
-  text: string;
-}
+
 
 const Whiteboard = () => {
   const [content, setContent] = useState<string>("");
