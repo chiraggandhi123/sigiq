@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { annotate } from "rough-notation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -39,7 +39,7 @@ const Whiteboard = () => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(event.target.innerText);
   };
-  const renderAnnotatedContent = () => {
+  const renderAnnotatedContent = useCallback(() => {
     let annotatedContent = content;
   
     annotations.forEach((item: any, id: any) => {
@@ -49,7 +49,7 @@ const Whiteboard = () => {
     });
   
     return annotatedContent;
-  };
+  },[content, annotations]);
   
   const handleAppend = async () => {
     setShoudlRenderAnimation(true); 
@@ -68,7 +68,7 @@ const Whiteboard = () => {
     if (annotations.length > 0) {
       const annotatedContent = renderAnnotatedContent();
       setAnimatedText(annotatedContent); }
-  }, [content, annotations]);
+  }, [content, annotations, renderAnnotatedContent]);
   
   useEffect(()=>{
     if(annotations.length > 0){
